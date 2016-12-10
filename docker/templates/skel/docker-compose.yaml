@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+   php70:
+     image: local/php70:7.0
+     volumes:
+       - "/volumes/_%_/www:/var/www/html"
+       - "/volumes/_%_/etc/php.ini:/usr/local/etc/php/php.ini"
+       - "/volumes/_%_/log/php.log:/var/log/php.log"
+       - "/volumes/_%_/etc/www.conf:/etc/php/7.0/fpm/pool.d/www.conf"
+     restart: always
+     extra_hosts:
+        - "mysql_server:172.17.0.1"
+
+
+   nginx:
+     depends_on:
+       - php70
+     image: local/nginx:latest
+     volumes:
+       - "/volumes/_%_/www:/var/www/html"
+       - "/volumes/_%_/etc/site.conf:/etc/nginx/conf.d/site.conf"
+       - "/volumes/_%_/etc/fastcgi_params:/etc/nginx/fastcgi_params"
+       - "/volumes/_%_/log/access.log:/var/log/nginx/access.log"
+       - "/volumes/_%_/log/error.log:/var/log/nginx/error.log" 
+     links:
+       - php70
+     ports:
+       - "_!_:80"
+     restart: always
+     extra_hosts:
+        - "mysql_server:172.17.0.1"

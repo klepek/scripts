@@ -1,0 +1,7 @@
+   if (req.http.host ~ "^(www\.)?_%_$") {
+       #You will need the following line only if your backend has multiple virtual host names
+       set req.http.host = "_%_";
+       set req.backend_hint = _!_;
+       return (hash);
+   }
+
